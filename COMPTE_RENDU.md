@@ -49,3 +49,110 @@
 5. Pourquoi la validation faite par le navigateur ne remplace-t-elle pas celle de l'API ?
 
 ## 6. Lien de la pull request
+
+
+---
+
+# 7. Atelier 6 — Faire de LogiAI un package Python
+
+## 7.1 Création du package
+
+- Nom du package : `logiai`
+- Version : `0.1.0`
+- Outil de construction : setuptools
+- Fichier de configuration : `pyproject.toml`
+- Installation en mode développement :
+
+```bash
+pip install -e ".[api,dev]"
+```
+
+## 7.2 Tests automatisés
+
+Résultat final :
+
+```text
+52 passed, 1 warning
+```
+
+Le warning concerne une dépréciation Starlette avec httpx et n'empêche pas les tests de réussir.
+
+## 7.3 Commande CLI
+
+Commande utilisée :
+
+```bash
+logiai-predict livraison.json
+```
+
+Résultat obtenu :
+
+```text
+Probabilité de retard : 73% (ALERTE)
+```
+
+Test d'un fichier inexistant :
+
+```text
+Erreur : fichier introuvable : fichier_inexistant.json
+Code de sortie : 1
+```
+
+## 7.4 Distribution du package
+
+Commande :
+
+```bash
+python -m build
+```
+
+Fichiers générés :
+
+- `logiai-0.1.0.tar.gz`
+- `logiai-0.1.0-py3-none-any.whl`
+
+Le wheel contient le code Python, mais pas les dossiers `models/`, `data/` et `tests/`.
+
+## 7.5 Simulation chez un autre développeur
+
+Le wheel a été installé dans un environnement virtuel indépendant.
+
+Sans `LOGIAI_HOME`, le modèle est introuvable.
+
+Après configuration :
+
+```powershell
+$env:LOGIAI_HOME = "C:\Users\user\Desktop\logiai_Atelier4\starter2"
+```
+
+La prédiction fonctionne :
+
+```text
+Probabilité de retard : 73% (ALERTE)
+```
+
+## 7.6 Intégration Docker
+
+Le Dockerfile installe désormais LogiAI comme un package Python.
+
+Vérification :
+
+```text
+/usr/local/lib/python3.11/site-packages/logiai/__init__.py
+```
+
+Les ressources restent dans `/app` :
+
+- `data/`
+- `models/`
+
+Le conteneur API est `Healthy`.
+
+## 7.7 Décision architecturale
+
+ADR 005 : Transformer LogiAI en package Python distribuable.
+
+## 7.8 Conclusion personnelle
+
+Cet atelier m'a permis de comprendre comment transformer un projet Python classique en package installable et distribuable. J'ai appris à utiliser pyproject.toml, setuptools, les fichiers wheel, les commandes CLI et la variable d'environnement LOGIAI_HOME. J'ai également compris comment intégrer un package Python dans Docker en séparant le code des données et du modèle.
+
